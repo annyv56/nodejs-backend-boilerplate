@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 
 import { registerUser, loginUser } from "./service";
+import { Authrequest } from "../../common/middleware/auth.middleware";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -50,4 +51,12 @@ export const getProfile = (req: Request, res: Response) => {
       message: "Internal Server Error",
     });
   }
+};
+
+export const adminOnly = async (req: Authrequest, res: Response) => {
+  return res.status(200).json({
+    success: true,
+    message: "Welcome Admin!",
+    data: req.user,
+  });
 };
