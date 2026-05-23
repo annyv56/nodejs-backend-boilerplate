@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 
-export interface Authrequest extends Request {
+export interface AuthRequest extends Request {
   user?: {
     userId: string;
     email: string;
@@ -10,7 +10,7 @@ export interface Authrequest extends Request {
 }
 
 export const authenticate: RequestHandler = (
-  req: Authrequest,
+  req: AuthRequest,
   res: Response,
   next: NextFunction,
 ) => {

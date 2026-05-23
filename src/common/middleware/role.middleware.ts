@@ -1,8 +1,8 @@
 import {Response, NextFunction} from "express";
 
-import {Authrequest} from "./auth.middleware";
+import {AuthRequest} from "./auth.middleware";
 
-export const authorize = (...allowedRoles: string[]) =>(req:Authrequest, res: Response, next: NextFunction) =>{
+export const authorize = (...allowedRoles: string[]) =>(req:AuthRequest, res: Response, next: NextFunction) =>{
     const userRole = req.user?.role;
 
     if(!userRole || !allowedRoles.includes(userRole)){
