@@ -1,5 +1,6 @@
 import express from "express";
-import authRoutes from '../src/modules/auth/routes'
+import authRoutes from "../src/modules/auth/routes";
+import { errorHandler } from "./common/middleware/error.middleware";
 
 const app = express();
 
@@ -12,6 +13,8 @@ app.get("/health", (_req, res) => {
   });
 });
 
-app.use("/api/auth", authRoutes)
+app.use("/api/auth", authRoutes);
+
+app.use(errorHandler);
 
 export default app;

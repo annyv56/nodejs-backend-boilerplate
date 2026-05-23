@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import { registerUser, loginUser } from "./service";
 import { Authrequest } from "../../common/middleware/auth.middleware";
+import { asyncHandler } from "../../common/utils/asyncHandler";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -22,20 +23,14 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
-    const result = await loginUser(email, password);
-    return res.status(200).json({
-      sucess: true,
-      message: "Login Successful",
-      data: result,
-    });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message || "Something went wrong",
-    });
-  }
+  console.log("hiii");
+  const { email, password } = req.body;
+  const result = await loginUser(email, password);
+  return res.status(200).json({
+    sucess: true,
+    message: "Login Successful",
+    data: result,
+  });
 };
 
 export const getProfile = (req: Request, res: Response) => {
