@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import prisma from "../../database/prisma"
-
+import prisma from "../../database/prisma";
+import logger from "../../common/logger/logger";
 
 export const registerUser = async (email: string, password: string) => {
   const existingUser = await prisma.user.findUnique({
@@ -18,6 +18,13 @@ export const registerUser = async (email: string, password: string) => {
       password: hashedPassword,
     },
   });
+  logger.info(
+    {
+      id: user.id,
+      email: user.email,
+    },
+    "User Created",
+  );
   return {
     id: user.id,
     email: user.email,
