@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import {generateAccessToken, generateRefreshToken} from "../token/service"
 import bcrypt from "bcryptjs";
 import prisma from "../../database/prisma";
 import logger from "../../common/logger/logger";
@@ -39,25 +39,20 @@ export const loginUser = async (email: string, password: string) => {
   });
 
   if (!user) {
-    throw new Error("Invalid Credentials");
+    logger.warn({email}, "Login failed: User not found")
+    throw new Error("Invalid Credentials")
   }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
+    logger.warn({email}, "Login failed: Invalid Password")
     throw new Error("Invalid credentials");
   }
-  const token = jwt.sign(
-    {
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    process.env.JWT_SECRET as string,
-    {
-      expiresIn: "1d",
-    },
-  );
+  const accessToken = generateAccessToken(user.id, user.email, user.role)
+  const refreshToken = await generateRefreshToken(user.id)
+  logger.info({userId: user.id, email: user.email})
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: {
       id: user.id,
       email: user.email,
