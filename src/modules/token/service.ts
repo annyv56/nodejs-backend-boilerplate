@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import prisma from "../../database/prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
-const REFRESH_TOKEN = process.env.REFRESH_SECRET as string;
+const REFRESH_SECRET= process.env.REFRESH_SECRET as string;
 
 export const generateAccessToken = (
   userId: string,
@@ -23,7 +23,7 @@ export const generateAccessToken = (
 };
 
 export const generateRefreshToken = async (userId: string) => {
-  const token = jwt.sign({ userId }, REFRESH_TOKEN, {
+  const token = jwt.sign({ userId }, REFRESH_SECRET, {
     expiresIn: "7d",
   });
   await prisma.refreshToken.create({
@@ -62,3 +62,20 @@ export const refreshAccessToken = async (refreshToken: string) => {
     accessToken,
   };
 };
+
+export const revokeRefreshToken = async (refreshToken:string) =>{
+  const token = await prisma.refreshToken.findUnique({
+    where:{
+        token: refreshToken,
+    }
+  })
+  if (!token){
+    throw new Error("Refresh token not found")
+  }
+  await prisma.refreshToken.delete({
+    where:{
+        token:refreshToken,
+    }
+  });
+  return true;
+}

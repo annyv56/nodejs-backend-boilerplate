@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { registerUser, loginUser } from "./service";
 import { AuthRequest } from "../../common/middleware/auth.middleware";
 import { asyncHandler } from "../../common/utils/asyncHandler";
-import { refreshAccessToken } from "../token/service";
+import { refreshAccessToken, revokeRefreshToken } from "../token/service";
 
 export const register = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -48,7 +48,6 @@ export const adminOnly = asyncHandler(
   },
 );
 
-
 export const refreshToken = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const { refreshToken } = req.body;
@@ -63,3 +62,15 @@ export const refreshToken = asyncHandler(
     });
   },
 );
+
+export const logout = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    throw new Error("Refresh token is required");
+  }
+  await revokeRefreshToken(refreshToken);
+  return res.status(200).json({
+    success: true,
+    message: "Logged out sucessfully",
+  });
+});
