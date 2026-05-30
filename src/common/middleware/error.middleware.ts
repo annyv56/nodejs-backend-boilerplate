@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "../logger/logger";
 
+import {AppError} from "../errors/appError"
+import {HTTP_STATUS} from "../constants/httpStatus"
+
 export const errorHandler = (
   error: any,
   _req: Request,
@@ -12,9 +15,15 @@ export const errorHandler = (
     stack: error.stack,
   },
   "Unhandled application error"
-  );
-  return res.status(400).json({
+  )
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      success: false,
+      message: error.message
+    })
+  }
+  return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     success: false,
-    message: error.message || "Something went Wrong",
+    message: error.message || "Internal Server Error"
   });
 };

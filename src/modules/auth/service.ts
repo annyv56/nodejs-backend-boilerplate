@@ -2,13 +2,15 @@ import {generateAccessToken, generateRefreshToken} from "../token/service"
 import bcrypt from "bcryptjs";
 import prisma from "../../database/prisma";
 import logger from "../../common/logger/logger";
+import { AppError } from "../../common/errors/appError";
+import { HTTP_STATUS } from "../../common/constants/httpStatus";
 
 export const registerUser = async (email: string, password: string) => {
   const existingUser = await prisma.user.findUnique({
     where: { email },
   });
   if (existingUser) {
-    throw new Error("User already registered");
+    throw new AppError(HTTP_STATUS.CONFLICT, "User already registered");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,12 +42,12 @@ export const loginUser = async (email: string, password: string) => {
 
   if (!user) {
     logger.warn({email}, "Login failed: User not found")
-    throw new Error("Invalid Credentials")
+    throw new AppError(HTTP_STATUS.UNAUTHRORIZED, "Invalid Credentials")
   }
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     logger.warn({email}, "Login failed: Invalid Password")
-    throw new Error("Invalid credentials");
+    throw new AppError(HTTP_STATUS.UNAUTHRORIZED, "Invalid credentials");
   }
   const accessToken = generateAccessToken(user.id, user.email, user.role)
   const refreshToken = await generateRefreshToken(user.id)
