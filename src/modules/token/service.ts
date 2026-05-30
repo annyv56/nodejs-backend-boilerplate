@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import prisma from "../../database/prisma";
+import {config} from "../../config/index"
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-const REFRESH_SECRET= process.env.REFRESH_SECRET as string;
+const JWT_SECRET = config.jwtSecret
+const REFRESH_SECRET= config.refreshSecret
 
 export const generateAccessToken = (
   userId: string,
@@ -45,7 +46,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
   if (!storedToken) {
     throw new Error("Invalid refresh token");
   }
-  const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET as string) as {
+  const decoded = jwt.verify(refreshToken, config.refreshSecret) as {
     userId: string;
   };
   const user = await prisma.user.findUnique({
