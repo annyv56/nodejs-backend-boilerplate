@@ -5,14 +5,20 @@ services:
     image: postgres:15
     container_name: backend-postgresql
     restart: always
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
 
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgresAdmin@257
       POSTGRES_DB: backend_dn
-
-    ports:
-      - "5432:5432"
     
     volumes:
       - postgres_data:/var/lib/postgresql/data
