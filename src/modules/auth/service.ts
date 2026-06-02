@@ -4,6 +4,7 @@ import prisma from "../../database/prisma";
 import logger from "../../common/logger/logger";
 import { AppError } from "../../common/errors/appError";
 import { HTTP_STATUS } from "../../common/constants/httpStatus";
+import { addWelcomeEmailJob } from "../queue/queues/email";
 
 export const registerUser = async (email: string, password: string) => {
   const existingUser = await prisma.user.findUnique({
@@ -20,6 +21,7 @@ export const registerUser = async (email: string, password: string) => {
       password: hashedPassword,
     },
   });
+  await addWelcomeEmailJob(user.email)
   logger.info(
     {
       id: user.id,
