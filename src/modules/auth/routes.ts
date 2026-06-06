@@ -5,16 +5,16 @@ import { validate } from "../../common/middleware/validate.middleware";
 import { authenticate } from "../../common/middleware/auth.middleware";
 import { authorize } from "../../common/middleware/role.middleware";
 
-const router = Router();
+const app = Router();
 
-router.post("/register", validate(registerSchema), register);
-router.post("/login", validate(loginSchema), login);
+app.post("/register", validate(registerSchema), register);
+app.post("/login", validate(loginSchema), login);
 
-router.get("/getProfile", authenticate, getProfile);
-router.get("/deleteUser", authenticate, authorize("ADMIN"), adminOnly);
+app.get("/getProfile", authenticate, getProfile);
+app.get("/deleteUser", authenticate, authorize("ADMIN"), adminOnly);
 
-router.post("/refresh-token", refreshToken )
+app.post("/refresh-token", refreshToken )
 
-router.post("/logout", logout)
+app.post("/logout", logout)
 
-export default router;
+export default app;
