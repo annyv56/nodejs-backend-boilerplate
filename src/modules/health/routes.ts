@@ -1,12 +1,11 @@
 import { Router } from "express";
+import {health, readiness} from "./controller"
 
-const app = Router();
 
-app.get("/check", (_req, res) => {
-  return res.json({
-    success: true,
-    message: "Server running",
-  });
-});
+const router = Router();
 
-export default app;
+router.get("/", health)
+
+router.get("/ready", readiness)
+
+export default router;
